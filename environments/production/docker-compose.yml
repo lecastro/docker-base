@@ -1,0 +1,107 @@
+version: '3.7'
+
+services:
+  nginx-app:
+    restart: always
+    hostname: nginx-app
+    image:
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - app
+    networks:
+      - app_network
+
+  app:
+    restart: always
+    hostname: app
+    image:
+    ports:
+      - 9000:9000
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1
+    networks:
+      - app_network
+
+  elasticsearch:
+    restart: always
+    hostname: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    links:
+      - app
+    networks:
+      - app_network
+
+  kibana:
+    restart: always
+    hostname: kibana
+    image: docker.elastic.co/kibana/kibana:8.2.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "5601:5601"
+    links:
+      - elasticsearch
+    networks:
+      - app_network
+      
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=123
+    volumes:
+      - rmqdata/:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine3.15
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass redis
+    volumes:
+      - cache:/data
+    depends_on:
+      - app
+    links:
+      - app
+    networks:
+      - app_network
+
+database:
+    name: database
+  rmqdata:
+    name: rmqdata
+  cache:
+    name: cache
+  esdata:
+    name: esdata
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge
+    name: app_network

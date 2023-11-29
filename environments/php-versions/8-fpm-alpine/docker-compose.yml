@@ -1,0 +1,9 @@
+version: '3.7'
+
+services: 
+  tradeup-php8:
+    hostname: tradeupgroup01/php:8.0.0-fpm-alpine
+    image: tradeupgroup01/php:8.0.0-fpm-alpine
+    build:
+      context: .
+      dockerfile: .
