@@ -1,7 +1,0 @@
-version: '3.7'
-
-services:
-  app:
-    hostname: tradeupgroup01/php:8.1.4-fpm-alpine
-    image: tradeupgroup01/php:8.1.4-fpm-alpine
-    build: .

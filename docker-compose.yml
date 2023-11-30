@@ -117,7 +117,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
-      - rmqdata/:/var/lib/rabbitmq
+      - rmqdata:/var/lib/rabbitmq
     ports:
       - ${RABBITMQ_PORT}:5672
       - ${RABBITMQ_PORT_HTTPS}:15672
@@ -153,6 +153,7 @@ volumes:
   esdata:
     name: ${APP_NAME}_es_vol 
     driver: local
+
 networks:
   app_network:
     driver: bridge
