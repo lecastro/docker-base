@@ -36,7 +36,6 @@ services:
     environment:
       - COMPOSER_MEMORY_LIMIT=-1
       - PHP_IDE_CONFIG="serverName=Localhost"
-      - XDEBUG_CONFIG="client_host=localhost remote_host=host.docker.internal log=/tmp/xdebug.log"
     links:
       - mysql
       - rabbitmq
